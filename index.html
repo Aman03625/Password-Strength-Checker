@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Strength Checker</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>
+            <i class="fa-solid fa-lock"></i>
+            Password Strength Checker
+        </h1>
+
+        <label for="password">Enter Password</label>
+
+        <div class="password-box">
+
+            <input type="password"
+                id="password"
+                placeholder="Enter Password">
+
+            <i class="fa-solid fa-eye"
+                id="togglePassword"></i>
+
+        </div>
+
+        <h3>Strength</h3>
+
+        <div class="progress">
+
+            <div class="progress-bar"
+                id="progressBar"></div>
+
+        </div>
+
+        <p class="strength-text"
+            id="strengthText">
+            Weak
+        </p>
+
+        <hr>
+
+        <div class="rules">
+
+            <p  id="lengthRule">❌ At least 8 Characters</p>
+
+            <p id="upperRule">❌ Uppercase Letter</p>
+
+            <p id="lowerRule">❌ Lowercase Letter</p>
+
+            <p id="numberRule">❌ Number</p>
+
+            <p id="specialRule">❌ Special Character</p>
+
+        </div>
+
+        <hr>
+
+        <button id="generateBtn">
+
+            <i class="fa-solid fa-key"></i>
+
+            Generate Strong Password
+
+        </button>
+
+    </div>
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
