@@ -15,6 +15,20 @@ const numberRule = document.getElementById("numberRule");
 const specialRule = document.getElementById("specialRule");
 
 const generateBtn = document.getElementById("generateBtn");
+const copyPassword=document.getElementById("copyPassword");
+
+const slider=document.getElementById("lengthSlider");
+
+const lengthValue=document.getElementById("lengthValue");
+
+const upperCheck=document.getElementById("upperCheck");
+
+const lowerCheck=document.getElementById("lowerCheck");
+
+const numberCheck=document.getElementById("numberCheck");
+
+const symbolCheck=document.getElementById("symbolCheck");
+
 
 // =========================
 // Show / Hide Password
@@ -39,6 +53,38 @@ togglePassword.addEventListener("click", () => {
     }
 
 });
+if (slider) {
+    slider.addEventListener("input", () => {
+        lengthValue.innerHTML = slider.value;
+    });
+    lengthValue.innerHTML = slider.value;
+}
+if (copyPassword) {
+
+    copyPassword.addEventListener("click", () => {
+
+        if (password.value === "") {
+
+            alert("Generate Password First");
+            return;
+
+        }
+
+        navigator.clipboard.writeText(password.value)
+            .then(() => {
+                alert("Password Copied Successfully!");
+            })
+            .catch(() => {
+                alert("Failed to Copy Password");
+            });
+
+    });
+
+}
+
+
+
+
 
 // =========================
 // Live Password Checker
@@ -49,6 +95,7 @@ password.addEventListener("input", checkPassword);
 function checkPassword() {
 
     const value = password.value;
+    
 
     let score = 0;
 
@@ -170,6 +217,7 @@ function checkPassword() {
         strengthText.style.color = "green";
 
     }
+    analyzePassword(value);
 
 }
 
@@ -179,45 +227,68 @@ function checkPassword() {
 
 generateBtn.addEventListener("click", generatePassword);
 
-function generatePassword() {
+function generatePassword(){
 
-    const uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    const lowercase = "abcdefghijklmnopqrstuvwxyz";
-    const numbers = "0123456789";
-    const symbols = "@#$%&*!?";
+    let upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    let lower = "abcdefghijklmnopqrstuvwxyz";
+    let number = "0123456789";
+    let symbol = "@#$%&*!?";
 
-    const allChars = uppercase + lowercase + numbers + symbols;
+    let chars = "";
 
-    let newPassword = "";
+    if(upperCheck.checked)
+        chars += upper;
 
-    // One character from each category
+    if(lowerCheck.checked)
+        chars += lower;
 
-    newPassword += uppercase[Math.floor(Math.random() * uppercase.length)];
-    newPassword += lowercase[Math.floor(Math.random() * lowercase.length)];
-    newPassword += numbers[Math.floor(Math.random() * numbers.length)];
-    newPassword += symbols[Math.floor(Math.random() * symbols.length)];
+    if(numberCheck.checked)
+        chars += number;
 
-    // Remaining characters
+    if(symbolCheck.checked)
+        chars += symbol;
 
-    for (let i = 4; i < 12; i++) {
+    if(chars == ""){
 
-        newPassword += allChars[Math.floor(Math.random() * allChars.length)];
+        alert("Select at least one option");
+
+        return;
 
     }
 
-    // Shuffle password
+    let pass = "";
+    let passwordLength = slider ? slider.value : 12;
 
-    newPassword = newPassword
-        .split("")
-        .sort(() => Math.random() - 0.5)
-        .join("");
+for (let i = 0; i < passwordLength; i++) {
 
-    // Set password
+    pass += chars[Math.floor(Math.random() * chars.length)];
 
-    password.value = newPassword;
+}
 
-    // Update strength automatically
+
+    
+
+    password.value = pass;
 
     checkPassword();
 
+}
+async function analyzePassword(passwordValue) {
+
+    const response = await fetch("/analyze", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            password: passwordValue
+        })
+    });
+
+    const data = await response.json();
+
+    console.log(data);
+
+    // Abhi testing ke liye
+    console.log("Backend Score:", data.score);
 }

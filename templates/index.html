@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Password Strength Checker</title>
 
-    <link rel="stylesheet" href="style.css">
+     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
@@ -28,6 +28,7 @@
             <input type="password"
                 id="password"
                 placeholder="Enter Password">
+                <i class="fa-solid fa-copy" id="copyPassword"></i>
 
             <i class="fa-solid fa-eye"
                 id="togglePassword"></i>
@@ -65,6 +66,60 @@
         </div>
 
         <hr>
+        <h3>Password Length</h3>
+
+<input
+type="range"
+id="lengthSlider"
+min="8"
+max="20"
+value="12">
+
+<p class="slider-text">
+Length :
+<span id="lengthValue">12</span>
+</p>
+
+<hr>
+
+<div class="options">
+
+<label>
+<input type="checkbox"
+id="upperCheck"
+checked>
+
+Uppercase
+</label>
+
+<label>
+<input type="checkbox"
+id="lowerCheck"
+checked>
+
+Lowercase
+</label>
+
+<label>
+<input type="checkbox"
+id="numberCheck"
+checked>
+
+Numbers
+</label>
+
+<label>
+<input type="checkbox"
+id="symbolCheck"
+checked>
+
+Symbols
+</label>
+
+</div>
+
+<hr>
+
 
         <button id="generateBtn">
 
@@ -76,7 +131,7 @@
 
     </div>
 
-    <script src="script.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
 
 </body>
 
