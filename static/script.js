@@ -28,6 +28,8 @@ const lowerCheck=document.getElementById("lowerCheck");
 const numberCheck=document.getElementById("numberCheck");
 
 const symbolCheck=document.getElementById("symbolCheck");
+const entropyText = document.getElementById("entropy");
+const crackTimeText = document.getElementById("crackTime");
 
 
 // =========================
@@ -275,20 +277,30 @@ for (let i = 0; i < passwordLength; i++) {
 }
 async function analyzePassword(passwordValue) {
 
-    const response = await fetch("/analyze", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            password: passwordValue
-        })
-    });
+    try {
 
-    const data = await response.json();
+        const response = await fetch("/analyze", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                password: passwordValue
+            })
+        });
 
-    console.log(data);
+        const data = await response.json();
 
-    // Abhi testing ke liye
-    console.log("Backend Score:", data.score);
+        entropyText.innerHTML = data.entropy + " bits";
+        crackTimeText.innerHTML = data.crack_time;
+
+        console.log(data);
+        console.log("Backend Score:", data.score);
+
+    } catch (error) {
+
+        console.log("Backend Error:", error);
+
+    }
+
 }
