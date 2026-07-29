@@ -30,6 +30,28 @@ const numberCheck=document.getElementById("numberCheck");
 const symbolCheck=document.getElementById("symbolCheck");
 const entropyText = document.getElementById("entropy");
 const crackTimeText = document.getElementById("crackTime");
+const commonPasswordText = document.getElementById("commonPassword");
+const suggestionText = document.getElementById("passwordSuggestion");
+ const scoreText = document.getElementById("score");
+ const stars = document.getElementById("stars");
+const loading = document.getElementById("loading");
+const copyMessage = document.getElementById("copyMessage");
+
+const upperCount = document.getElementById("upperCount");
+const lowerCount = document.getElementById("lowerCount");
+const numberCount = document.getElementById("numberCount");
+const symbolCount = document.getElementById("symbolCount");
+const lengthCount = document.getElementById("lengthCount");
+
+const suggestionList = document.getElementById("suggestionList");
+
+const historyList = document.getElementById("historyList");
+
+const breachResult = document.getElementById("breachResult");
+
+const themeToggle = document.getElementById("themeToggle");
+
+const downloadReport = document.getElementById("downloadReport");
 
 
 // =========================
@@ -74,10 +96,14 @@ if (copyPassword) {
 
         navigator.clipboard.writeText(password.value)
             .then(() => {
-                alert("Password Copied Successfully!");
+                copyMessage.style.display = "block";
+
+setTimeout(()=>{
+    copyMessage.style.display="none";
+},2000);
             })
             .catch(() => {
-                alert("Failed to Copy Password");
+                console.log("Copy Failed");
             });
 
     });
@@ -219,6 +245,15 @@ function checkPassword() {
         strengthText.style.color = "green";
 
     }
+    upperCount.innerHTML = (value.match(/[A-Z]/g) || []).length;
+
+lowerCount.innerHTML = (value.match(/[a-z]/g) || []).length;
+
+numberCount.innerHTML = (value.match(/[0-9]/g) || []).length;
+
+symbolCount.innerHTML = (value.match(/[^A-Za-z0-9]/g) || []).length;
+
+lengthCount.innerHTML = value.length;
     analyzePassword(value);
 
 }
@@ -278,6 +313,7 @@ for (let i = 0; i < passwordLength; i++) {
 async function analyzePassword(passwordValue) {
 
     try {
+        loading.style.display="block";
 
         const response = await fetch("/analyze", {
             method: "POST",
@@ -291,11 +327,102 @@ async function analyzePassword(passwordValue) {
 
         const data = await response.json();
 
-        entropyText.innerHTML = data.entropy + " bits";
-        crackTimeText.innerHTML = data.crack_time;
+// Password Analysis
+entropyText.innerHTML = data.entropy + " bits";
+crackTimeText.innerHTML = data.crack_time;
 
-        console.log(data);
-        console.log("Backend Score:", data.score);
+// Security Check
+commonPasswordText.innerHTML = data.message;
+suggestionText.innerHTML = data.suggestion;
+
+// Password Score (0-100)
+scoreText.innerHTML = data.score * 20;
+suggestionList.innerHTML="";
+
+if(passwordValue.length<8){
+
+suggestionList.innerHTML+="<li>✔ Increase Length</li>";
+
+}
+
+if(!/[A-Z]/.test(passwordValue)){
+
+suggestionList.innerHTML+="<li>✔ Add Uppercase</li>";
+
+}
+
+if(!/[a-z]/.test(passwordValue)){
+
+suggestionList.innerHTML+="<li>✔ Add Lowercase</li>";
+
+}
+
+if(!/[0-9]/.test(passwordValue)){
+
+suggestionList.innerHTML+="<li>✔ Add Numbers</li>";
+
+}
+
+if(!/[!@#$%^&*(),.?\":{}|<>]/.test(passwordValue)){
+
+suggestionList.innerHTML+="<li>✔ Add Symbols</li>";
+
+}
+
+if(suggestionList.innerHTML==""){
+
+suggestionList.innerHTML="<li>✔ Excellent Password</li>";
+
+}
+let starsCount=Math.ceil((data.score*20)/20);
+
+ const starIcons = stars.querySelectorAll("i");
+
+starIcons.forEach((star, index) => {
+    if(index < starsCount){
+        star.classList.remove("fa-regular");
+        star.classList.add("fa-solid");
+        star.classList.add("active");
+    }else{
+        star.classList.remove("fa-solid");
+        star.classList.add("fa-regular");
+        star.classList.remove("active");
+    }
+});
+if(passwordValue!=""){
+
+let li=document.createElement("li");
+
+li.innerHTML=passwordValue;
+
+historyList.prepend(li);
+
+if(historyList.children.length>5){
+
+historyList.removeChild(historyList.lastChild);
+
+}
+
+}
+if(data.message.includes("common")){
+
+breachResult.innerHTML="⚠ Found in Known Breaches";
+
+breachResult.style.color="red";
+
+}
+else{
+
+breachResult.innerHTML="🛡 Not Found in Known Breaches";
+
+breachResult.style.color="#00ff99";
+
+}
+
+console.log(data);
+loading.style.display="none";
+console.log("Backend Score:", data.score);
+        
 
     } catch (error) {
 
@@ -304,3 +431,47 @@ async function analyzePassword(passwordValue) {
     }
 
 }
+themeToggle.addEventListener("click",()=>{
+
+document.body.classList.toggle("light");
+
+if(document.body.classList.contains("light")){
+
+themeToggle.innerHTML="☀";
+
+}else{
+
+themeToggle.innerHTML="🌙";
+
+}
+
+});
+downloadReport.addEventListener("click",()=>{
+
+const report=`
+Password Report
+
+Score : ${scoreText.innerHTML}/100
+
+Entropy : ${entropyText.innerHTML}
+
+Crack Time : ${crackTimeText.innerHTML}
+
+Security : ${commonPasswordText.innerHTML}
+
+Suggestion : ${suggestionText.innerHTML}
+
+Generated : ${new Date().toLocaleString()}
+`;
+
+const blob=new Blob([report],{type:"text/plain"});
+
+const link=document.createElement("a");
+
+link.href=URL.createObjectURL(blob);
+
+link.download="Password_Report.txt";
+
+link.click();
+
+});

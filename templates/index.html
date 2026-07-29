@@ -2,152 +2,374 @@
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Password Strength Checker</title>
 
-     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <!-- Favicon -->
+    <link rel="icon"
+        href="https://cdn-icons-png.flaticon.com/512/3064/3064155.png">
 
+    <!-- CSS -->
+    <link rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}">
+
+    <!-- Font Awesome -->
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
 </head>
 
 <body>
+      <button id="themeToggle">
+           🌙
+</button>
 
-    <div class="container">
+<div class="container">
+    <img src="{{ url_for('static', filename='images/logo.png') }}" class="logo">
+     
 
-        <h1>
-            <i class="fa-solid fa-lock"></i>
-            Password Strength Checker
-        </h1>
+    <!-- Logo -->
 
-        <label for="password">Enter Password</label>
+    <h1>
 
-        <div class="password-box">
+        <i class="fa-solid fa-shield-halved"></i>
 
-            <input type="password"
-                id="password"
-                placeholder="Enter Password">
-                <i class="fa-solid fa-copy" id="copyPassword"></i>
+        Password Strength Checker
 
-            <i class="fa-solid fa-eye"
-                id="togglePassword"></i>
+    </h1>
+     <p class="tagline">
+    Analyze • Generate • Secure
+</p>
+
+    <!-- Password Input -->
+
+    <label>Enter Password</label>
+
+    <div class="password-box">
+
+        <input
+            type="password"
+            id="password"
+            placeholder="Enter Password">
+
+        <i class="fa-solid fa-copy"
+            id="copyPassword"></i>
+
+        <i class="fa-solid fa-eye"
+            id="togglePassword"></i>
+
+    </div>
+    <span id="copyMessage">
+
+Copied ✔
+
+</span>
+
+    <!-- Password Score -->
+
+    <h3>Password Score</h3>
+
+    <div class="score">
+        <p>
+            score :
+            <span id="score">0</span> / 100
+        </p>
+         <div id="stars">
+
+    <i class="fa-regular fa-star"></i>
+    <i class="fa-regular fa-star"></i>
+    <i class="fa-regular fa-star"></i>
+    <i class="fa-regular fa-star"></i>
+    <i class="fa-regular fa-star"></i>
+
+            </div>
+
+    </div>
+
+    <!-- Strength -->
+
+    <h3>Strength</h3>
+
+    <div class="progress">
+
+        <div
+            class="progress-bar"
+            id="progressBar">
 
         </div>
 
-        <h3>Strength</h3>
+    </div>
 
-        <div class="progress">
+    <p
+        class="strength-text"
+        id="strengthText">
 
-            <div class="progress-bar"
-                id="progressBar"></div>
+        Weak
 
-        </div>
+    </p>
 
-        <p class="strength-text"
-            id="strengthText">
-            Weak
+    <hr>
+
+     <div id="loading">
+
+<i class="fa-solid fa-spinner fa-spin"></i>
+
+Analyzing Password...
+
+</div>
+
+    <!-- Password Analysis -->
+
+    <div class="analysis-box">
+
+        <h3>
+
+            📊 Password Analysis
+
+        </h3>
+
+        <p>
+
+            <strong>📈 Entropy :</strong>
+
+            <span id="entropy">
+
+                0 bits
+
+            </span>
+
         </p>
 
-        <hr>
-        
+        <br>
 
-<h3>Password Analysis</h3>
+        <p>
 
-<p>
-    <strong>Entropy:</strong>
-    <span id="entropy">0 bits</span>
-</p>
+            <strong>⏳ Crack Time :</strong>
 
-<p>
-    <strong>Estimated Crack Time:</strong>
-    <span id="crackTime">Instantly</span>
-</p>
+            <span id="crackTime">
 
-<hr>
+                Instantly
 
+            </span>
 
-        <div class="rules">
+        </p>
 
-            <p  id="lengthRule">❌ At least 8 Characters</p>
+    </div>
 
-            <p id="upperRule">❌ Uppercase Letter</p>
+    <hr>
 
-            <p id="lowerRule">❌ Lowercase Letter</p>
+    <!-- Security Check -->
 
-            <p id="numberRule">❌ Number</p>
+    <div class="analysis-box">
 
-            <p id="specialRule">❌ Special Character</p>
+        <h3>
 
-        </div>
+            🛡 Security Check
 
-        <hr>
-        <h3>Password Length</h3>
+        </h3>
 
-<input
-type="range"
-id="lengthSlider"
-min="8"
-max="20"
-value="12">
+        <p id="commonPassword"></p>
 
-<p class="slider-text">
-Length :
-<span id="lengthValue">12</span>
-</p>
+        <br>
 
-<hr>
+        <p id="passwordSuggestion"></p>
 
-<div class="options">
+        <p id="breachResult"></p>
 
-<label>
-<input type="checkbox"
-id="upperCheck"
-checked>
+    </div>
 
-Uppercase
-</label>
+    
 
-<label>
-<input type="checkbox"
-id="lowerCheck"
-checked>
+<!-- Password Statistics -->
 
-Lowercase
-</label>
+<div class="analysis-box">
 
-<label>
-<input type="checkbox"
-id="numberCheck"
-checked>
+<h3>📋 Password Statistics</h3>
 
-Numbers
-</label>
+<p>🔠 Uppercase :
+<span id="upperCount">0</span></p>
 
-<label>
-<input type="checkbox"
-id="symbolCheck"
-checked>
+<p>🔡 Lowercase :
+<span id="lowerCount">0</span></p>
 
-Symbols
-</label>
+<p>🔢 Numbers :
+<span id="numberCount">0</span></p>
+
+<p>✨ Symbols :
+<span id="symbolCount">0</span></p>
+
+<p>📏 Length :
+<span id="lengthCount">0</span></p>
 
 </div>
 
 <hr>
+<div class="analysis-box">
 
+<h3>💡 Suggestions</h3>
 
-        <button id="generateBtn">
+<ul id="suggestionList">
 
-            <i class="fa-solid fa-key"></i>
+<li>Start typing password...</li>
 
-            Generate Strong Password
+</ul>
 
-        </button>
+</div>
+
+<hr>
+    
+
+    <!-- Rules -->
+
+    <h3>Password Rules</h3>
+
+    <div class="rules">
+
+        <p id="lengthRule">
+            ❌ At least 8 Characters
+        </p>
+
+        <p id="upperRule">
+            ❌ Uppercase Letter
+        </p>
+
+        <p id="lowerRule">
+            ❌ Lowercase Letter
+        </p>
+
+        <p id="numberRule">
+            ❌ Number
+        </p>
+
+        <p id="specialRule">
+            ❌ Special Character
+        </p>
 
     </div>
 
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <hr>
+
+    <!-- Slider -->
+
+    <h3>Password Length</h3>
+
+    <input
+        type="range"
+        id="lengthSlider"
+        min="8"
+        max="20"
+        value="12">
+
+    <p class="slider-text">
+
+        Length :
+
+        <span id="lengthValue">
+
+            12
+
+        </span>
+
+    </p>
+
+    <hr>
+
+    <!-- Options -->
+
+    <div class="options">
+
+        <label>
+
+            <input
+                type="checkbox"
+                id="upperCheck"
+                checked>
+
+            Uppercase
+
+        </label>
+
+        <label>
+
+            <input
+                type="checkbox"
+                id="lowerCheck"
+                checked>
+
+            Lowercase
+
+        </label>
+
+        <label>
+
+            <input
+                type="checkbox"
+                id="numberCheck"
+                checked>
+
+            Numbers
+
+        </label>
+
+        <label>
+
+            <input
+                type="checkbox"
+                id="symbolCheck"
+                checked>
+
+            Symbols
+
+        </label>
+
+    </div>
+
+    <hr>
+
+    <!-- Generate Button -->
+
+    <button id="generateBtn">
+
+        <i class="fa-solid fa-key"></i>
+
+        Generate Strong Password
+
+    </button>
+    <hr>
+
+    <button id="downloadReport">
+
+<i class="fa-solid fa-file-pdf"></i>
+
+Download Report
+
+</button>
+    <hr>
+
+<div class="analysis-box">
+
+<h3>🕘 Password History</h3>
+
+<ul id="historyList">
+
+</ul>
+
+</div>
+
+    <!-- Footer -->
+ <hr>
+
+<footer class="footer">
+    <p>Made with ❤️ by <strong>Aman Yadav</strong></p>
+    <p>© 2026 Password Strength Checker</p>
+</footer>
+
+</div>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
 
 </body>
 
