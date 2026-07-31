@@ -1,5 +1,7 @@
 from flask import Flask, render_template, request, jsonify
 import math
+import hashlib
+import requests
 
 app = Flask(__name__)
 
@@ -51,8 +53,11 @@ def analyze():
     if any(c.isdigit() for c in password):
         charset += 10
 
-    if any(c in "@#$%&*!?" for c in password):
-        charset += 8
+    symbols = "!@#$%^&*(),.?\":{}|<>"
+
+    if any(c in symbols for c in password):
+     charset += 32
+    charset += 8
 
     if charset == 0:
         entropy = 0
@@ -67,85 +72,78 @@ def analyze():
 
     if entropy == 0:
         crack_time = "Instantly"
-
     else:
         seconds = (2 ** entropy) / guesses_per_second
 
         if seconds < 60:
             crack_time = f"{int(seconds)} Seconds"
-
         elif seconds < 3600:
             crack_time = f"{int(seconds / 60)} Minutes"
-
         elif seconds < 86400:
             crack_time = f"{int(seconds / 3600)} Hours"
-
         elif seconds < 31536000:
             crack_time = f"{int(seconds / 86400)} Days"
-
         elif seconds < 3153600000:
             crack_time = f"{int(seconds / 31536000)} Years"
-
         else:
             crack_time = "Millions of Years"
 
     # ==========================
-    # Common Password Detection
+    # Have I Been Pwned Check
     # ==========================
 
-    common_passwords = [
-        "123",
-        "1234",
-        "12345",
-        "123456",
-        "1234567",
-        "12345678",
-        "123456789",
-        "password",
-        "password123",
-        "qwerty",
-        "qwerty123",
-        "admin",
-        "admin123",
-        "welcome",
-        "letmein",
-        "abc123",
-        "login",
-        "dragon",
-        "football",
-        "iloveyou",
-        "monkey"
-    ]
+    sha1password = hashlib.sha1(password.encode("utf-8")).hexdigest().upper()
 
-    password_lower = password.lower()
-    is_common = False
+    prefix = sha1password[:5]
+    suffix = sha1password[5:]
 
-    for p in common_passwords:
+    found = False
+    breach_count = 0
 
-        # Exact Match
-        if password_lower == p:
-            is_common = True
-            break
+    try:
+        url = f"https://api.pwnedpasswords.com/range/{prefix}"
+        response = requests.get(
+    url,
+    headers={
+        "User-Agent": "PasswordStrengthChecker/1.0"
+    },
+    timeout=5
+)
 
-        # Common password + up to 3 extra characters
-        if password_lower.startswith(p) and len(password_lower) <= len(p) + 3:
-            is_common = True
-            break
+        if response.status_code == 200:
 
-    if is_common:
+            hashes = response.text.splitlines()
 
-        message = "⚠️ This password is commonly used and easy to guess."
+            for line in hashes:
+
+                hash_suffix, count = line.split(":")
+
+                if hash_suffix == suffix:
+                    found = True
+                    breach_count = int(count)
+                    break
+
+    except Exception:
+        found = False
+        breach_count = 0
+
+    if found:
+        message = (
+            f"⚠ This password has appeared in {breach_count:,} data breaches."
+        )
 
         suggestion = (
-            "Choose a stronger password using uppercase, lowercase, "
-            "numbers and special symbols."
+            "Never use this password. Generate a new unique password immediately."
         )
 
     else:
+        message = (
+            "✅ Good News! This password was not found in HaveIBeenPwned."
+        )
 
-        message = "✅ This password is not found in common password lists."
-
-        suggestion = "Great! Your password appears unique."
+        suggestion = (
+            "Your password has not appeared in known public breaches."
+        )
 
     # ==========================
     # Password Statistics
@@ -154,7 +152,7 @@ def analyze():
     upper_count = sum(1 for c in password if c.isupper())
     lower_count = sum(1 for c in password if c.islower())
     number_count = sum(1 for c in password if c.isdigit())
-    symbol_count = sum(1 for c in password if c in "@#$%&*!?")
+    symbol_count = sum(1 for c in password if c in symbols)
     length = len(password)
 
     # ==========================
@@ -168,26 +166,22 @@ def analyze():
     # ==========================
 
     return jsonify({
-
         "score": score,
         "score100": score100,
-
         "entropy": entropy,
         "crack_time": crack_time,
-
         "message": message,
         "suggestion": suggestion,
+        "breached": found,
+        "breach_count": breach_count,
 
         "stats": {
-
             "uppercase": upper_count,
             "lowercase": lower_count,
             "numbers": number_count,
             "symbols": symbol_count,
             "length": length
-
         }
-
     })
 
 
