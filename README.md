@@ -6,6 +6,14 @@ This application analyzes password strength in real time, estimates crack time, 
 
 ---
 
+# 🌐 Live Demo
+
+🚀 **Try the Live Application Here**
+
+https://password-strength-checker-1-e1gu.onrender.com/
+
+---
+
 # ✨ Features
 
 - 🔒 Real-Time Password Strength Analysis
@@ -38,6 +46,7 @@ This application analyzes password strength in real time, estimates crack time, 
 - Chart.js
 - jsPDF
 - Have I Been Pwned API
+- Render
 
 ---
 
@@ -132,13 +141,13 @@ Password-Strength-Checker
 
 # 🚀 Future Improvements
 
-- Multi-language support
-- Password Manager Integration
-- Email Strength Checker
-- AI-based Password Suggestions
-- Multi-theme Support
-- Cloud Password History
-- OTP Generator
+- 🔑 Password Manager Integration
+- 🤖 AI-based Password Suggestions
+- 📧 Email Strength Checker
+- ☁️ Cloud Password History
+- 🎨 Multiple Themes
+- 🔐 Two-Factor Authentication Support
+- 📱 Progressive Web App (PWA)
 
 ---
 
@@ -146,11 +155,14 @@ Password-Strength-Checker
 
 **Aman Yadav**
 
-GitHub Profile:
+🔗 GitHub Profile  
 https://github.com/Aman03625
 
-Project Repository:
+📂 Project Repository  
 https://github.com/Aman03625/Password-Strength-Checker
+
+🌐 Live Demo  
+https://password-strength-checker-1-e1gu.onrender.com/
 
 ---
 
@@ -159,9 +171,9 @@ https://github.com/Aman03625/Password-Strength-Checker
 Contributions are welcome!
 
 1. Fork the repository
-2. Create your feature branch
+2. Create a new feature branch
 3. Commit your changes
-4. Push to your branch
+4. Push your branch
 5. Open a Pull Request
 
 ---
@@ -172,4 +184,4 @@ This project is licensed under the **MIT License**.
 
 ---
 
-⭐ If you like this project, don't forget to **Star** the repository on GitHub!
+⭐ **If you like this project, please consider giving it a Star on GitHub!**
